@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-page">
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Doctor Dashboard</h1>
+            <p>Welcome, Dr. {{ user.username }}!</p>
+            <div class="header-actions">
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+
+        <div class="appointments-section">
+            <h2>Your Upcoming Appointments</h2>
+            {% if appointments %}
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Appointment Reason</th>
+                            <th>Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                            <tr>
+                                <!-- We access the patient's name via the 'booker' relationship -->
+                                <td>{{ appointment.booker.username }}</td>
+                                <td>{{ appointment.title }}</td>
+                                <td>{{ appointment.date.strftime('%A, %b %d, %Y at %I:%M %p') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-appointments">You have no appointments scheduled.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

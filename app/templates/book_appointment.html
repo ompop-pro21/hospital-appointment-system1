@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book an Appointment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-box">
+        <h1 class="gradient-text">Book a New Appointment</h1>
+        <form id="booking-form" class="auth-form">
+            <div class="form-group">
+                <label for="title">Appointment Reason:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="doctor">Choose a Doctor:</label>
+                <select name="doctor_id" id="doctor" class="form-control" required>
+                    <option value="" disabled selected>Select a doctor...</option>
+                    {% for doctor in doctors %}
+                        <option value="{{ doctor.id }}">{{ doctor.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Choose a date and time:</label>
+                <input type="datetime-local" id="date" name="date" required>
+            </div>
+            <button type="submit" class="btn">Book Now</button>
+        </form>
+        <p class="message" id="message"></p>
+        <div class="form-footer">
+            <a href="{{ url_for('main.dashboard') }}">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="blob c"></div>
+    <div class="blob d"></div>
+    <div class="blob e"></div>
+
+    <script>
+        document.getElementById('booking-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageElement = document.getElementById('message');
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch("{{ url_for('main.book_appointment') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json().then(result => ({ok: response.ok, result})))
+            .then(({ok, result}) => {
+                messageElement.textContent = result.message;
+                messageElement.classList.add('show'); // Make the message visible
+
+                if (ok) {
+                    messageElement.classList.add('success');
+                    // Hide the form and show a redirecting message
+                    document.getElementById('booking-form').style.display = 'none';
+                    
+                    // Wait 2 seconds, then redirect to the dashboard
+                    setTimeout(() => {
+                        window.location.href = "{{ url_for('main.dashboard') }}";
+                    }, 2000); // 2000 milliseconds = 2 seconds
+                } else {
+                    messageElement.classList.add('error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageElement.textContent = 'An error occurred.';
+                messageElement.classList.add('show', 'error');
+            });
+        });
+    </script>
+</body>
+</html>

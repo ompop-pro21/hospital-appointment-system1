@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-box">
+        <h1 class="gradient-text">Login</h1>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Login Securely</button>
+        </form>
+        <p class="message" id="message"></p>
+        <div class="form-footer">
+            <a href="{{ url_for('auth.reset_request') }}">Forgot Password?</a>
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageElement = document.getElementById('message');
+            const form = event.target;
+            
+            fetch("{{ url_for('auth.login') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(new FormData(form))),
+            })
+            .then(response => response.json().then(data => ({ok: response.ok, data})))
+            .then(({ok, data}) => {
+                messageElement.textContent = data.message;
+                messageElement.classList.add('show');
+                messageElement.classList.remove('success', 'error');
+
+                if (ok) {
+                    messageElement.classList.add('success');
+                    // Add fade-out effect for a smooth transition
+                    document.querySelector('.auth-page').classList.add('fade-out');
+                    // Wait for the animation to finish before redirecting
+                    setTimeout(() => { window.location.href = data.redirect_url; }, 500);
+                } else {
+                    messageElement.classList.add('error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageElement.textContent = 'An error occurred.';
+                messageElement.classList.add('show', 'error');
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-dashboard-page">
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard - All Appointments</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('admin.manage_users') }}" class="btn">Manage Users</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+        
+        <table class="admin-table" id="appointment-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Appointment Reason</th>
+                    <th>Assigned Doctor</th>
+                    <th>Date & Time</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if appointments %}
+                    {% for appointment in appointments %}
+                        <tr id="appointment-row-{{ appointment.id }}">
+                            <td>{{ appointment.booker.username }}</td>
+                            <td>{{ appointment.title }}</td>
+                            <!-- This line displays the assigned doctor's name -->
+                            <td>Dr. {{ appointment.doctor.username }}</td>
+                            <td>{{ appointment.date.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                            <td>
+                                <button class="btn btn-delete" data-id="{{ appointment.id }}">Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="no-appointments">There are no appointments booked in the system yet.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('appointment-table').addEventListener('click', function(event) {
+            if (event.target.classList.contains('btn-delete')) {
+                const appointmentId = event.target.dataset.id;
+                if (confirm('Are you sure you want to delete this appointment?')) {
+                    fetch(`/delete_appointment/${appointmentId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById(`appointment-row-${appointmentId}`).remove();
+                        } else {
+                            alert('Failed to delete appointment.');
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

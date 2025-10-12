@@ -1,0 +1,413 @@
+/* --- GLOBAL SETUP & DYNAMIC BACKGROUND --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden; /* Important for the background elements */
+}
+
+/* ============================================================
+    AUTH PAGE STYLES (Login, Register, Reset)
+============================================================
+*/
+
+.auth-page {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f2f6ff; /* Fallback background */
+    animation: dynamic-background 40s linear infinite;
+    transition: opacity 0.5s ease-out;
+}
+
+@keyframes dynamic-background {
+    0%   { background-color: #f2f6ff; }
+    25%  { background-color: #f7f2ff; }
+    50%  { background-color: #fff2f2; }
+    75%  { background-color: #f2fff7; }
+    100% { background-color: #f2f6ff; }
+}
+
+/* Decorative, drifting blobs */
+.auth-page::before,
+.auth-page::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.5;
+    z-index: -1;
+}
+
+.auth-page::before {
+    background: linear-gradient(45deg, #89f7fe, #66a6ff);
+    top: -10%;
+    left: -10%;
+    animation: move-blob-1 15s infinite alternate ease-in-out;
+}
+
+.auth-page::after {
+    background: linear-gradient(45deg, #ff758c, #ff7eb3);
+    bottom: -10%;
+    right: -10%;
+    animation: move-blob-2 18s infinite alternate ease-in-out;
+}
+
+@keyframes move-blob-1 {
+    to { transform: translate(100px, 200px); }
+}
+
+@keyframes move-blob-2 {
+    to { transform: translate(-200px, -100px); }
+}
+
+/* Floating, Frosted-Glass Auth Box */
+.auth-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    border-radius: 20px;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Colorful Gradient Title */
+.auth-box .gradient-text, .auth-box h1 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 2.2em;
+    background: linear-gradient(45deg, #007bff, #c850c0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.auth-box.register-box h1 {
+    background: linear-gradient(45deg, #4CAF50, #81C784);
+    -webkit-background-clip: text; background-clip: text;
+}
+.auth-box.reset-box h1 {
+    background: linear-gradient(45deg, #f59e0b, #fbbf24);
+    -webkit-background-clip: text; background-clip: text;
+}
+
+
+/* Form Inputs with Proper Spacing */
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #484b6a;
+    font-weight: 500;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    outline: none;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Attractive & Animated Button */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    color: white;
+    background: linear-gradient(45deg, #66a6ff, #89f7fe);
+    background-size: 200% auto;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(102, 166, 255, 0.4);
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+}
+
+.btn:hover {
+    background-position: right center;
+    box-shadow: 0 6px 20px rgba(137, 247, 254, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Links & Messages */
+.form-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+.form-footer a {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.form-footer a:hover {
+    color: #003d7c;
+    text-decoration: underline;
+}
+
+.message {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 10px;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    min-height: 44px;
+}
+.message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.message.success {
+    background-color: rgba(40, 167, 69, 0.15);
+    color: #155724;
+}
+.message.error {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: #721c24;
+}
+
+/* Redirect Fade-Out Animation */
+.auth-page.fade-out {
+    opacity: 0;
+}
+
+/* ============================================================
+    DASHBOARD STYLES (User, Admin, Doctor)
+============================================================
+*/
+
+.dashboard-page, .admin-dashboard-page {
+    background-color: #f4f7fc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    overflow-y: auto; /* Allow scrolling on dashboards */
+}
+
+.dashboard-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 30px;
+}
+.dashboard-header h1 {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #2c3e50;
+}
+.dashboard-header p {
+    font-size: 1.1em;
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+.header-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.header-actions .btn {
+    width: auto;
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #6c757d, #adb5bd);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+.btn-secondary:hover {
+     box-shadow: 0 6px 20px rgba(173, 181, 189, 0.4);
+}
+
+.appointments-section h2, .account-settings h2 {
+    font-size: 1.8em;
+    color: #34495e;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+    display: inline-block;
+}
+
+#appointment-list {
+    list-style: none;
+    padding: 0;
+}
+
+.appointment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+.appointment-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.appointment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.appointment-title {
+    font-weight: 600;
+    font-size: 1.2em;
+    color: #2c3e50;
+}
+.appointment-doctor {
+    font-style: italic;
+    color: #34495e;
+}
+.appointment-date {
+    font-size: 0.9em;
+    color: #7f8c8d;
+}
+
+.btn-delete {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    padding: 8px 15px;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    width: auto;
+}
+.btn-delete:hover {
+     box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+}
+
+.no-appointments {
+    text-align: center;
+    font-size: 1.1em;
+    color: #95a5a6;
+    padding: 40px 0;
+}
+
+.account-settings-wrapper {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+.account-settings {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.account-settings .btn {
+    width: auto;
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #dc3545, #b22222);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+.btn-danger:hover {
+    box-shadow: 0 6px 20px rgba(178, 34, 34, 0.4);
+}
+
+/* ADMIN DASHBOARD & USER MANAGEMENT PAGE */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.admin-table thead tr {
+    background-color: #34495e;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.admin-table th, .admin-table td {
+    padding: 15px 20px;
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+    transition: background-color 0.3s ease;
+}
+
+.admin-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+.admin-table tbody tr:nth-of-type(even):hover {
+    background-color: #e9ecef;
+}
+.admin-table tbody tr:last-of-type {
+    border-bottom: 2px solid #34495e;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.admin-table td .btn {
+    width: auto;
+}
+/* Style the select dropdown on the user management page */
+.role-select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+}
+

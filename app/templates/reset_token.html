@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Set New Password</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-box reset-box">
+        <h1 class="gradient-text">Set New Password</h1>
+        <form id="reset-token-form">
+            <div class="form-group">
+                <label for="password">Enter Your New Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Update Password</button>
+        </form>
+        <p class="message" id="message"></p>
+        <div class="form-footer" style="display: none;" id="login-link-footer">
+             <a href="{{ url_for('auth.login') }}">Click here to log in</a>
+        </div>
+    </div>
+    
+    <div class="blob c"></div>
+    <div class="blob d"></div>
+    <div class="blob e"></div>
+
+    <script>
+        document.getElementById('reset-token-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageElement = document.getElementById('message');
+            const form = event.target;
+            const loginLinkFooter = document.getElementById('login-link-footer');
+            
+            fetch("{{ url_for('auth.reset_token', token=token) }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(new FormData(form))),
+            })
+            .then(response => response.json().then(data => ({ok: response.ok, data})))
+            .then(({ok, data}) => {
+                messageElement.textContent = data.message;
+                messageElement.classList.add('show');
+                messageElement.classList.remove('success', 'error');
+
+                if (ok) {
+                    messageElement.classList.add('success');
+                    form.style.display = 'none'; // Hide the form
+                    loginLinkFooter.style.display = 'block'; // Show the login link
+                } else {
+                    messageElement.classList.add('error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

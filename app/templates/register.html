@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-box register-box">
+        <h1 class="gradient-text">Create Account</h1>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
+        <p class="message" id="message"></p>
+        <div class="form-footer">
+            <a href="{{ url_for('auth.login') }}">Already have an account?</a>
+        </div>
+    </div>
+    
+    <script>
+        // Your existing JavaScript is perfect and doesn't need to be pasted here again
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageElement = document.getElementById('message');
+            const form = event.target;
+            fetch("{{ url_for('auth.register') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(new FormData(form))),
+            })
+            .then(response => response.json().then(data => ({ok: response.ok, data})))
+            .then(({ok, data}) => {
+                messageElement.textContent = data.message;
+                messageElement.classList.add('show');
+                 if (ok) {
+                    messageElement.classList.add('success');
+                    document.querySelector('.auth-page').classList.add('fade-out');
+                    setTimeout(() => { window.location.href = "{{ url_for('auth.login') }}"; }, 2000);
+                } else {
+                    messageElement.classList.add('error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

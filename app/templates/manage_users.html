@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-dashboard-page">
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Admin Panel - User Management</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Back to Appointments</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+        
+        <table class="admin-table" id="user-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Current Role</th>
+                    <th>Set New Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr data-user-id="{{ user.id }}">
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td class="current-role">{{ user.role }}</td>
+                    <td>
+                        <!-- This select element now has a class to style it -->
+                        <select name="role" class="role-select form-group">
+                            <option value="patient" {% if user.role == 'patient' %}selected{% endif %}>Patient</option>
+                            <option value="doctor" {% if user.role == 'doctor' %}selected{% endif %}>Doctor</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        <!-- This button now has the standard 'btn' class -->
+                        <button class="btn save-role-btn">Save</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- This paragraph now has the 'message' class for styling -->
+        <p class="message" id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('user-table').addEventListener('click', function(event) {
+            if (event.target.classList.contains('save-role-btn')) {
+                const row = event.target.closest('tr');
+                const userId = row.dataset.userId;
+                const roleSelect = row.querySelector('.role-select');
+                const newRole = roleSelect.value;
+                const messageElement = document.getElementById('message');
+
+                fetch(`/admin/user/${userId}/set_role`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: newRole }),
+                })
+                .then(response => response.json().then(data => ({ok: response.ok, data})))
+                .then(({ok, data}) => {
+                    messageElement.textContent = data.message;
+                    messageElement.classList.add('show');
+                    messageElement.classList.remove('success', 'error');
+
+                    if (ok) {
+                        row.querySelector('.current-role').textContent = newRole;
+                        messageElement.classList.add('success');
+                    } else {
+                        messageElement.classList.add('error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageElement.textContent = 'An error occurred.';
+                    messageElement.classList.add('show', 'error');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
