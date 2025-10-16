@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
 
-# This line loads the environment variables from your .env file
 load_dotenv() 
 
 db = SQLAlchemy()
@@ -15,9 +14,10 @@ mail = Mail()
 def create_app():
     app = Flask(__name__)
 
-    # This code works perfectly both locally (reads from .env) and on Render
+    # This code works perfectly both locally and on Render
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///../instance/database.db')
+    # This is the corrected line that ensures Postgres is always used on Render
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
     # This is the corrected mail configuration for reliable sending
     app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
@@ -53,4 +53,3 @@ def create_app():
     app.register_blueprint(doctor_blueprint)
 
     return app
-
