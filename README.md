@@ -6,8 +6,6 @@
 
 **Live Application URL:** **[https://hospital-appointment-system1-rdqx.onrender.com](https://hospital-appointment-system1-rdqx.onrender.com)**
 
-*(Suggestion: Take a screenshot of your beautiful login page and upload it to a site like [Imgur](https://imgur.com/upload) to get a URL. Then you can add it here to make your README even more impressive!)*
-
 ## Overview
 
 This project is a complete and secure web platform built from the ground up using Python and the Flask framework. It provides a seamless experience for patients to book appointments with available doctors, for doctors to manage their schedules, and for administrators to have a complete overview of the system's operations. The application is designed with a professional, scalable architecture, features a stunning and fully animated user interface, and is deployed live on the internet using modern cloud-hosting practices.
